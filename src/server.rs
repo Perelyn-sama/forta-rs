@@ -31,7 +31,13 @@ impl Agent for AgentService {
                 message: String::default(),
             }],
             addresses: vec![String::default()],
-            alert_config: Some(agent::AlertConfig::default()),
+            // alert_config: Some(agent::AlertConfig::default()),
+            alert_config: Some(agent::AlertConfig { subscriptions: vec![agent::CombinerBotSubscription{ 
+                bot_id: "".to_owned(),
+                alert_id: "".to_owned(),
+                alert_ids: vec!["".to_owned()],
+                chain_id: 1
+            }] })
         };
 
         Ok(Response::new(reply))
