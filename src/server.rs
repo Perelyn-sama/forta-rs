@@ -19,25 +19,30 @@ impl Agent for AgentService {
         &self,
         request: Request<InitializeRequest>,
     ) -> Result<Response<InitializeResponse>, Status> {
-        println!("Got a request: {:?}", request);
+        // println!("Got a request: {:?}", request);
+        dbg!(&request);
+        // dbg!(&request.message);
 
         let req = request.into_inner();
-        dbg!(req);
+        // dbg!(&req);
+        // dbg!(&req.agent_id);
 
         // FIXME remove hardcoded values
         let reply = InitializeResponse {
-            status: 0,
+            status: Status::ok("").code().into(),
             errors: vec![agent::Error {
                 message: String::default(),
             }],
             addresses: vec![String::default()],
             // alert_config: Some(agent::AlertConfig::default()),
-            alert_config: Some(agent::AlertConfig { subscriptions: vec![agent::CombinerBotSubscription{ 
-                bot_id: "".to_owned(),
-                alert_id: "".to_owned(),
-                alert_ids: vec!["".to_owned()],
-                chain_id: 1
-            }] })
+            alert_config: Some(agent::AlertConfig {
+                subscriptions: vec![agent::CombinerBotSubscription {
+                    bot_id: req.agent_id,
+                    alert_id: "".to_owned(),
+                    alert_ids: vec!["".to_owned()],
+                    chain_id: 1,
+                }],
+            }),
         };
 
         Ok(Response::new(reply))
