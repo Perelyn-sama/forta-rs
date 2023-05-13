@@ -16,7 +16,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let response = client.initialize(request).await?;
 
-    println!("RESPONSE={:?}", response);
+    dbg!(response);
 
     Ok(())
 }
