@@ -11,7 +11,17 @@ pub mod agent {
 }
 
 #[derive(Debug, Default)]
-pub struct AgentService {}
+pub struct AgentService {
+    is_initialized: bool,
+}
+
+impl AgentService {
+    fn new() -> AgentService {
+        AgentService {
+            is_initialized: false,
+        }
+    }
+}
 
 #[tonic::async_trait]
 impl Agent for AgentService {
