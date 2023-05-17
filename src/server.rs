@@ -17,8 +17,8 @@ pub struct AgentService {
     is_initialized: Arc<Mutex<bool>>,
 }
 
-impl AgentService {
-    fn new() -> AgentService {
+impl Default for AgentService {
+    fn default() -> Self {
         AgentService {
             is_initialized: Arc::new(Mutex::new(false)),
         }
