@@ -5,6 +5,8 @@ use agent::{
     EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest, EvaluateBlockResponse,
     EvaluateTxRequest, EvaluateTxResponse, InitializeRequest, InitializeResponse,
 };
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 pub mod agent {
     tonic::include_proto!("network.forta");
