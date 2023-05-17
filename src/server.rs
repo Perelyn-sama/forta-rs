@@ -12,7 +12,7 @@ pub mod agent {
     tonic::include_proto!("network.forta");
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct AgentService {
     is_initialized: bool,
 }
