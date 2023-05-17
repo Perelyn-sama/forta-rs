@@ -14,13 +14,13 @@ pub mod agent {
 
 #[derive(Debug)]
 pub struct AgentService {
-    is_initialized: bool,
+    is_initialized: Arc<Mutex<bool>>,
 }
 
 impl AgentService {
     fn new() -> AgentService {
         AgentService {
-            is_initialized: false,
+            is_initialized: Arc::new(Mutex::new(false)),
         }
     }
 }
@@ -31,9 +31,10 @@ impl Agent for AgentService {
         &self,
         request: Request<InitializeRequest>,
     ) -> Result<Response<InitializeResponse>, Status> {
-        // println!("Got a request: {:?}", request);
-        dbg!(&request);
-        // dbg!(&request.message);
+        println!("Got a request: {:?}", request);
+
+        let mut is_initialized = self.is_initialized.lock().await;
+        *is_initialized = true;
 
         let req = request.into_inner();
         // dbg!(&req);
