@@ -16,14 +16,16 @@ pub mod agent {
 #[derive(Debug)]
 pub struct AgentService {
     is_initialized: Arc<Mutex<bool>>,
-    getAgentHandlers : Option<GetAgentHandlers>
+    get_agent_handlers : Option<GetAgentHandlers>,
+    initialize_response : Option<InitializeResponse>
 }
 
 impl Default for AgentService {
     fn default() -> Self {
         AgentService {
             is_initialized: Arc::new(Mutex::new(false)),
-            getAgentHandlers : None
+            get_agent_handlers : None,
+            initialize_response : None
         }
     }
 }
@@ -43,9 +45,9 @@ type HandleTransaction = fn (txEvent: TransactionEvent) -> Promise<Vec<Finding>,
 struct  AgentHandlers {
     initialize: Initialize,
     initialize_response: InitializeResponse,
-    handleTransaction: HandleTransaction,
-    handleBlock: HandleBlock,
-    handleAlert: HandleAlert,
+    handle_transaction: HandleTransaction,
+    handle_block: HandleBlock,
+    handle_alert: HandleAlert,
 }
 //constructor(getAgentHandlers) {
 //    assertExists(getAgentHandlers, "getAgentHandlers");
@@ -55,13 +57,16 @@ struct  AgentHandlers {
 //      this.initializeResponse = {};
 //}
 impl AgentService{
-    // type GetAgentHandlers = (options?: GetAgentHandlersOptions) => Promise<AgentHandlers>=
 
-
-
-    fn build(getAgentHandlers : Option<GetAgentHandlers>) ->Self{
-        Self { is_initialized: Arc::new(Mutex::new(false)), getAgentHandlers: getAgentHandlers }
+    fn initialize_agent_handlers() {
+        todo!()
     }
+
+    fn build(get_agent_handlers : Option<GetAgentHandlers>) ->Self{
+        Self::initialize_agent_handlers();
+        Self { is_initialized: Arc::new(Mutex::new(false)), get_agent_handlers , initialize_response: None }
+    }
+
 }
 #[tonic::async_trait]
 impl Agent for AgentService {
@@ -134,3 +139,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
     Ok(())
 }
+//
