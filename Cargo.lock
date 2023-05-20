@@ -174,6 +174,7 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 name = "forta-rs"
 version = "0.1.0"
 dependencies = [
+ "promises",
  "prost",
  "tokio",
  "tonic",
@@ -542,6 +543,12 @@ checksum = "1d0e1ae9e836cc3beddd63db0df682593d7e2d3d891ae8c9083d2113e1744224"
 dependencies = [
  "unicode-ident",
 ]
+
+[[package]]
+name = "promises"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "585956a6b46a16a1bedaab83a3a4f7bb36e1273b5b4f17a6dbb5779a14272d4f"
 
 [[package]]
 name = "prost"
