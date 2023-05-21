@@ -111,7 +111,24 @@ impl Agent for AgentService {
         &self,
         request: Request<EvaluateTxRequest>,
     ) -> Result<Response<EvaluateTxResponse>, Status> {
-        unimplemented!()
+        println!("Got a request: {:?}", request);
+
+        let req = request.into_inner();
+        dbg!(req);
+
+        let reply = EvaluateTxResponse {
+            status: ResponseStatus::Success as i32,
+            errors: vec![agent::Error {
+                message: String::default(),
+            }],
+            findings: vec![],
+            metadata: HashMap::default(),
+            timestamp: String::new(),
+            latency_ms: u32::default(),
+            private: false,
+        };
+
+        Ok(Response::new(reply))
     }
     async fn evaluate_block(
         &self,
