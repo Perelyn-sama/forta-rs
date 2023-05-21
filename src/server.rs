@@ -19,6 +19,28 @@ pub struct AgentService {
     initialize_response: Option<Arc<Mutex<InitializeResponse>>>,
 }
 
+impl AgentService {
+    fn new(get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>) -> Self {
+        assert!(
+            get_agent_handlers.is_some(),
+            "get_agent_handlers must exist"
+        );
+        let mut agent = AgentService {
+            get_agent_handlers,
+            is_initialized: Arc::new(Mutex::new(false)),
+            initialize_response: Some(Arc::new(Mutex::new(InitializeResponse::default()))),
+        };
+
+        Self::initialize_agent_handlers();
+
+        agent
+    }
+
+    fn initialize_agent_handlers() {
+        todo!()
+    }
+}
+
 impl Default for AgentService {
     fn default() -> Self {
         AgentService {
