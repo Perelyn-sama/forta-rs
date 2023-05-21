@@ -14,7 +14,9 @@ pub mod agent {
 
 #[derive(Debug)]
 pub struct AgentService {
+    get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>,
     is_initialized: Arc<Mutex<bool>>,
+    initialize_response: Option<Arc<Mutex<InitializeResponse>>>,
 }
 
 impl Default for AgentService {
