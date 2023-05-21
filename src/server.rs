@@ -50,6 +50,26 @@ impl Default for AgentService {
         }
     }
 }
+
+#[derive(Debug)]
+struct GetAgentHandlersOptions {
+    should_run_initialize: Option<bool>,
+}
+type GetAgentHandlers =
+    fn(options: Option<GetAgentHandlersOptions>) -> Box<dyn Future<Output = AgentHandlers> + 'static>;
+type Initialize = fn() -> Box<dyn Future<Output = Option<InitializeResponse>> + 'static>;
+type HandleBlock = fn(blockEvent: BlockEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
+type HandleAlert = fn(alertEvent: AlertEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
+type HandleTransaction = fn(txEvent: TransactionEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
+
+
+#[derive(Debug)]
+struct AgentHandlers {
+    initialize: Initialize,
+    initialize_response: InitializeResponse,
+    handle_transaction: HandleTransaction,
+    handle_block: HandleBlock,
+    handle_alert: HandleAlert,
 }
 
 #[tonic::async_trait]
