@@ -1,10 +1,9 @@
 use tonic::{transport::Server, Request, Response, Status};
-use promises::Promise;
 
 use agent::agent_server::{Agent, AgentServer};
 use agent::{
     EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest, EvaluateBlockResponse,
-    EvaluateTxRequest, EvaluateTxResponse, InitializeRequest, InitializeResponse,TransactionEvent,Finding,BlockEvent,AlertEvent
+    EvaluateTxRequest, EvaluateTxResponse, InitializeRequest, InitializeResponse,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -16,58 +15,16 @@ pub mod agent {
 #[derive(Debug)]
 pub struct AgentService {
     is_initialized: Arc<Mutex<bool>>,
-    get_agent_handlers : Option<GetAgentHandlers>,
-    initialize_response : Option<InitializeResponse>
 }
 
 impl Default for AgentService {
     fn default() -> Self {
         AgentService {
             is_initialized: Arc::new(Mutex::new(false)),
-            get_agent_handlers : None,
-            initialize_response : None
         }
     }
 }
- struct  GetAgentHandlersOptions {shouldRunInitialize: Option<bool>}
-type GetAgentHandlers = fn(options : Option<GetAgentHandlersOptions>) -> Promise<AgentHandlers,Option<AgentHandlers>>;
-//export type Initialize = () => Promise<InitializeResponse | void>
-type Initialize =  fn() -> Promise<InitializeResponse,Option<InitializeResponse>>;
 
-//export type HandleBlock = (blockEvent: BlockEvent) => Promise<Finding[]>
-type HandleBlock = fn(blockEvent :BlockEvent) -> Promise<Vec<Finding>, Option<Finding>>;
-//export type HandleAlert = (alertEvent: AlertEvent) => Promise<Finding[]>
-type  HandleAlert = fn(alertEvent: AlertEvent) -> Promise<Vec<Finding>, Option<Finding>>;
-//export type HandleTransaction = (txEvent: TransactionEvent) => Promise<Finding[]>
-type HandleTransaction = fn (txEvent: TransactionEvent) -> Promise<Vec<Finding>,Option<Finding>>;
-
-
-struct  AgentHandlers {
-    initialize: Initialize,
-    initialize_response: InitializeResponse,
-    handle_transaction: HandleTransaction,
-    handle_block: HandleBlock,
-    handle_alert: HandleAlert,
-}
-//constructor(getAgentHandlers) {
-//    assertExists(getAgentHandlers, "getAgentHandlers");
-//    this.getAgentHandlers = getAgentHandlers;
-//    this.initializeAgentHandlers();
-//    this.isInitialized = false; // makes sure agent initialize handler only called once
-//      this.initializeResponse = {};
-//}
-impl AgentService{
-
-    fn initialize_agent_handlers() {
-        todo!()
-    }
-
-    fn build(get_agent_handlers : Option<GetAgentHandlers>) ->Self{
-        Self::initialize_agent_handlers();
-        Self { is_initialized: Arc::new(Mutex::new(false)), get_agent_handlers , initialize_response: None }
-    }
-
-}
 #[tonic::async_trait]
 impl Agent for AgentService {
     async fn initialize(
@@ -108,11 +65,6 @@ impl Agent for AgentService {
         request: Request<EvaluateTxRequest>,
     ) -> Result<Response<EvaluateTxResponse>, Status> {
         unimplemented!()
-//        println!("evaluate tx request received : {:?}",request);
-//        let req = request.into_inner();
-
-
-
     }
     async fn evaluate_block(
         &self,
@@ -139,4 +91,3 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
     Ok(())
 }
-//
