@@ -1,10 +1,13 @@
+use std::collections::HashMap;
 use tonic::{transport::Server, Request, Response, Status};
 
 use agent::agent_server::{Agent, AgentServer};
 use agent::{
-    EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest, EvaluateBlockResponse,
-    EvaluateTxRequest, EvaluateTxResponse, InitializeRequest, InitializeResponse,
+    AlertEvent, BlockEvent, EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest,
+    EvaluateBlockResponse, EvaluateTxRequest, EvaluateTxResponse, Finding, InitializeRequest,
+    InitializeResponse, ResponseStatus, TransactionEvent,
 };
+use std::future::Future;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -55,13 +58,14 @@ impl Default for AgentService {
 struct GetAgentHandlersOptions {
     should_run_initialize: Option<bool>,
 }
-type GetAgentHandlers =
-    fn(options: Option<GetAgentHandlersOptions>) -> Box<dyn Future<Output = AgentHandlers> + 'static>;
+type GetAgentHandlers = fn(
+    options: Option<GetAgentHandlersOptions>,
+) -> Box<dyn Future<Output = AgentHandlers> + 'static>;
 type Initialize = fn() -> Box<dyn Future<Output = Option<InitializeResponse>> + 'static>;
 type HandleBlock = fn(blockEvent: BlockEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
 type HandleAlert = fn(alertEvent: AlertEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
-type HandleTransaction = fn(txEvent: TransactionEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
-
+type HandleTransaction =
+    fn(txEvent: TransactionEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
 
 #[derive(Debug)]
 struct AgentHandlers {
@@ -84,17 +88,13 @@ impl Agent for AgentService {
         *is_initialized = true;
 
         let req = request.into_inner();
-        // dbg!(&req);
-        // dbg!(&req.agent_id);
 
-        // FIXME remove hardcoded values
         let reply = InitializeResponse {
-            status: Status::ok("").code().into(),
+            status: ResponseStatus::Success as i32,
             errors: vec![agent::Error {
                 message: String::default(),
             }],
             addresses: vec![String::default()],
-            // alert_config: Some(agent::AlertConfig::default()),
             alert_config: Some(agent::AlertConfig {
                 subscriptions: vec![agent::CombinerBotSubscription {
                     bot_id: req.agent_id,
