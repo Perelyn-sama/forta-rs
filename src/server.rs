@@ -1,3 +1,4 @@
+
 pub mod server_types;
 use server_types::{GetAgentHandlers,agent::{self,agent_server::{Agent, AgentServer},
     EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest,
@@ -14,6 +15,8 @@ pub struct AgentService {
     get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>,
     is_initialized: Arc<Mutex<bool>>,
     initialize_response: Option<Arc<Mutex<InitializeResponse>>>,
+
+
 }
 impl AgentService {
     fn new(get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>) -> Self {
@@ -45,10 +48,6 @@ impl Default for AgentService {
         }
     }
 }
-
-
-
-
 #[tonic::async_trait]
 impl Agent for AgentService {
     async fn initialize(
@@ -83,6 +82,7 @@ impl Agent for AgentService {
     async fn evaluate_tx(
         &self,
         request: Request<EvaluateTxRequest>,
+
         ) -> Result<Response<EvaluateTxResponse>, Status> {
         println!("Got a request: {:?}", request);
 
@@ -128,4 +128,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .serve(addr)
         .await?;
     Ok(())
+
 }
