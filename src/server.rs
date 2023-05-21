@@ -1,20 +1,13 @@
-use std::collections::HashMap;
+pub mod server_types;
+use server_types::{GetAgentHandlers,agent::{self,agent_server::{Agent, AgentServer},
+    EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest,
+    EvaluateBlockResponse, EvaluateTxRequest, EvaluateTxResponse, InitializeRequest,
+    InitializeResponse, ResponseStatus}};
+use std::{collections::HashMap,sync::Arc};
 use tonic::{transport::Server, Request, Response, Status};
-
-use agent::agent_server::{Agent, AgentServer};
-use agent::{
-    AlertEvent, BlockEvent, EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest,
-    EvaluateBlockResponse, EvaluateTxRequest, EvaluateTxResponse, Finding, InitializeRequest,
-    InitializeResponse, ResponseStatus, TransactionEvent,
-};
-// use agent
-use std::future::Future;
-use std::sync::Arc;
 use tokio::sync::Mutex;
 
-pub mod agent {
-    tonic::include_proto!("network.forta");
-}
+
 
 #[derive(Debug)]
 pub struct AgentService {
@@ -28,7 +21,7 @@ impl AgentService {
             get_agent_handlers.is_some(),
             "get_agent_handlers must exist"
         );
-        let mut agent = AgentService {
+        let agent = AgentService {
             get_agent_handlers,
             is_initialized: Arc::new(Mutex::new(false)),
             initialize_response: Some(Arc::new(Mutex::new(InitializeResponse::default()))),
@@ -53,25 +46,8 @@ impl Default for AgentService {
     }
 }
 
-#[derive(Debug)]
-struct GetAgentHandlersOptions {
-    should_run_initialize: Option<bool>,
-}
-type GetAgentHandlers =
-    fn(options: Option<GetAgentHandlersOptions>) -> Box<dyn Future<Output = AgentHandlers> + 'static>;
-type Initialize = fn() -> Box<dyn Future<Output = Option<InitializeResponse>> + 'static>;
-type HandleBlock = fn(blockEvent: BlockEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
-type HandleAlert = fn(alertEvent: AlertEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
-type HandleTransaction = fn(txEvent: TransactionEvent) -> Box<dyn Future<Output = Vec<Finding>> + 'static>;
 
-#[derive(Debug)]
-struct AgentHandlers {
-    initialize: Initialize,
-    initialize_response: InitializeResponse,
-    handle_transaction: HandleTransaction,
-    handle_block: HandleBlock,
-    handle_alert: HandleAlert,
-}
+
 
 #[tonic::async_trait]
 impl Agent for AgentService {
