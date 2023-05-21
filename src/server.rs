@@ -45,8 +45,11 @@ impl Default for AgentService {
     fn default() -> Self {
         AgentService {
             is_initialized: Arc::new(Mutex::new(false)),
+            get_agent_handlers: None,
+            initialize_response: None,
         }
     }
+}
 }
 
 #[tonic::async_trait]
