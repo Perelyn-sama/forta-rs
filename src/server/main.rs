@@ -1,22 +1,24 @@
-
-pub mod server_types;
-use server_types::{GetAgentHandlers,agent::{self,agent_server::{Agent, AgentServer},
-    EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest,
-    EvaluateBlockResponse, EvaluateTxRequest, EvaluateTxResponse, InitializeRequest,
-    InitializeResponse, ResponseStatus}};
-use std::{collections::HashMap,sync::Arc};
-use tonic::{transport::Server, Request, Response, Status};
+pub mod types;
+use std::future::Future;
+use std::{collections::HashMap, sync::Arc};
 use tokio::sync::Mutex;
-
-
+use tonic::{transport::Server, Request, Response, Status};
+use types::{
+    agent::{
+        self,
+        agent_server::{Agent, AgentServer},
+        EvaluateAlertRequest, EvaluateAlertResponse, EvaluateBlockRequest, EvaluateBlockResponse,
+        EvaluateTxRequest, EvaluateTxResponse, InitializeRequest, InitializeResponse,
+        ResponseStatus,
+    },
+    AgentHandlers, GetAgentHandlers, GetAgentHandlersOptions,
+};
 
 #[derive(Debug)]
 pub struct AgentService {
     get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>,
     is_initialized: Arc<Mutex<bool>>,
     initialize_response: Option<Arc<Mutex<InitializeResponse>>>,
-
-
 }
 impl AgentService {
     fn new(get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>) -> Self {
@@ -24,19 +26,34 @@ impl AgentService {
             get_agent_handlers.is_some(),
             "get_agent_handlers must exist"
         );
-        let agent = AgentService {
+        let mut agent = AgentService {
             get_agent_handlers,
             is_initialized: Arc::new(Mutex::new(false)),
             initialize_response: Some(Arc::new(Mutex::new(InitializeResponse::default()))),
         };
 
-        Self::initialize_agent_handlers();
+        Self::initialize_agent_handlers(&mut agent);
 
         agent
     }
 
-    fn initialize_agent_handlers() {
-        todo!()
+    fn initialize_agent_handlers(&mut self) {
+        let options = GetAgentHandlersOptions {
+            should_run_initialize: Some(false),
+        };
+        let agent_handlers = Self::get_agent_handlers(Some(options));
+        unimplemented!()
+    }
+
+    // Implement the function with the specified signature
+    fn get_agent_handlers(
+        options: Option<GetAgentHandlersOptions>,
+    ) -> Box<dyn Future<Output = AgentHandlers> + 'static> {
+        // Function implementation goes here
+        // You can create and return a future that resolves to an AgentHandlers instance
+        // For simplicity, we'll just return an empty Boxed future here
+        // Box::pin(async move { AgentHandlers })
+        unimplemented!()
     }
 }
 impl Default for AgentService {
@@ -53,7 +70,7 @@ impl Agent for AgentService {
     async fn initialize(
         &self,
         request: Request<InitializeRequest>,
-        ) -> Result<Response<InitializeResponse>, Status> {
+    ) -> Result<Response<InitializeResponse>, Status> {
         println!("Got a request: {:?}", request);
 
         let mut is_initialized = self.is_initialized.lock().await;
@@ -82,8 +99,7 @@ impl Agent for AgentService {
     async fn evaluate_tx(
         &self,
         request: Request<EvaluateTxRequest>,
-
-        ) -> Result<Response<EvaluateTxResponse>, Status> {
+    ) -> Result<Response<EvaluateTxResponse>, Status> {
         println!("Got a request: {:?}", request);
 
         let req = request.into_inner();
@@ -106,13 +122,13 @@ impl Agent for AgentService {
     async fn evaluate_block(
         &self,
         request: Request<EvaluateBlockRequest>,
-        ) -> Result<Response<EvaluateBlockResponse>, Status> {
+    ) -> Result<Response<EvaluateBlockResponse>, Status> {
         unimplemented!()
     }
     async fn evaluate_alert(
         &self,
         request: Request<EvaluateAlertRequest>,
-        ) -> Result<Response<EvaluateAlertResponse>, Status> {
+    ) -> Result<Response<EvaluateAlertResponse>, Status> {
         unimplemented!()
     }
 }
@@ -128,5 +144,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .serve(addr)
         .await?;
     Ok(())
-
 }
