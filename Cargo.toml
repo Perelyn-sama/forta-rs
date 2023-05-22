@@ -7,11 +7,11 @@ edition = "2021"
 
 [[bin]]
 name = "agent-server"
-path = "src/server.rs"
+path = "src/server/main.rs"
 
 [[bin]]
 name = "agent-client"
-path = "src/client.rs"
+path = "src/client/main.rs"
 
 [dependencies]
 prost = "0.11.8"
