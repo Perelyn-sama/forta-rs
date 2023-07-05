@@ -14,9 +14,11 @@ name = "agent-client"
 path = "src/client/main.rs"
 
 [dependencies]
+futures = "0.3.28"
 prost = "0.11.8"
 tokio = { version = "1.26.0", features = ["macros", "rt-multi-thread"] }
 tonic = "0.8.3"
+async-std = "*"
 
 [build-dependencies]
 tonic-build = "0.8.4"
