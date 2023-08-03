@@ -45,7 +45,7 @@ impl AgentHandlers {
 
     // Implement the function with the specified signature
     fn get_agent_handlers(
-        options: Option<GetAgentHandlersOptions>,
+        _options: Option<GetAgentHandlersOptions>,
     ) -> Box<dyn Future<Output = AgentHandlers> + 'static + Unpin> {
         // Function implementation goes here
         // You can create and return a future that resolves to an AgentHandlers instance
