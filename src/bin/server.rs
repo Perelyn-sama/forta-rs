@@ -25,7 +25,7 @@ pub struct AgentService {
 // }
 
 impl AgentService {
-    async fn new(mut get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>) -> Self {
+    async fn new(get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>) -> Self {
         assert!(
             get_agent_handlers.is_some(),
             "get_agent_handlers must exist"
@@ -34,13 +34,13 @@ impl AgentService {
         // let mutex = get_agent_handlers.as_mut().unwrap().lock();
         // let
 
-        let mut agent = AgentService {
+        
+
+        AgentService {
             get_agent_handlers,
             is_initialized: Arc::new(Mutex::new(false)),
             initialize_response: Some(Arc::new(Mutex::new(InitializeResponse::default()))),
-        };
-
-        agent
+        }
     }
 
     // async fn get_agent_handler(&mut self) {
@@ -113,13 +113,13 @@ impl Agent for AgentService {
     }
     async fn evaluate_block(
         &self,
-        request: Request<EvaluateBlockRequest>,
+        _request: Request<EvaluateBlockRequest>,
     ) -> Result<Response<EvaluateBlockResponse>, Status> {
         unimplemented!()
     }
     async fn evaluate_alert(
         &self,
-        request: Request<EvaluateAlertRequest>,
+        _request: Request<EvaluateAlertRequest>,
     ) -> Result<Response<EvaluateAlertResponse>, Status> {
         unimplemented!()
     }
