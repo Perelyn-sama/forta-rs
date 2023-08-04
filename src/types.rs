@@ -30,7 +30,7 @@ pub struct AgentHandlers {
 }
 
 impl AgentHandlers {
-    async fn initialize_agent_handlers(&mut self) {
+    pub async fn initialize_agent_handlers(&mut self) {
         let options = GetAgentHandlersOptions {
             should_run_initialize: Some(false),
         };
