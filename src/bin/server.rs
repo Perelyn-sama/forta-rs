@@ -1,5 +1,5 @@
 use forta_rs::agent::InitializeResponse;
-use forta_rs::types::GetAgentHandlers;
+use forta_rs::types::{GetAgentHandlers, GetAgentHandlersOptions};
 use forta_rs::{
     Agent, AgentServer, AlertConfig, CombinerBotSubscription, Error, EvaluateAlertRequest,
     EvaluateAlertResponse, EvaluateBlockRequest, EvaluateBlockResponse, EvaluateTxRequest,
@@ -25,16 +25,25 @@ pub struct AgentService {
 // }
 
 impl AgentService {
-    async fn new(get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>) -> Self {
+    async fn new(mut get_agent_handlers: Option<Arc<Mutex<GetAgentHandlers>>>) -> Self {
         assert!(
             get_agent_handlers.is_some(),
             "get_agent_handlers must exist"
         );
 
-        // let mutex = get_agent_handlers.as_mut().unwrap().lock();
-        // let
+        if let Some(mutex) = &mut get_agent_handlers {
+            let mutex_guard = mutex.lock().await;
 
-        
+            let get_agent_handlers: GetAgentHandlers = *mutex_guard;
+
+            let options: Option<GetAgentHandlersOptions> = Some(GetAgentHandlersOptions {
+                should_run_initialize: Some(false),
+            });
+
+            let mut agent_hander = get_agent_handlers(options).await;
+
+            agent_hander.initialize_agent_handlers().await;
+        }
 
         AgentService {
             get_agent_handlers,
